@@ -117,7 +117,7 @@ void handle_commands(char *line, Environment *environment)
             }
             else
             {
-                error(ERROR_MESSAGE);
+                error("There can be only one redirection sign.\n");
                 break;
             }
         }
@@ -137,8 +137,7 @@ Process run_program(Launch *launch)
     prelaunch.path_to_run = path_to_run;
     prelaunch.argv = argv;
     prelaunch.process = &process;
-    if (progrma_pre_launch_preparations(launch, &prelaunch) != 0) {
-        error(ERROR_MESSAGE);
+    if (program_pre_launch_preparations(launch, &prelaunch) != 0) {
         return process;
     }
     process.pid = fork();
@@ -166,12 +165,13 @@ Process run_program(Launch *launch)
     }
 }
 
-int progrma_pre_launch_preparations(Launch *launch, PreLaunch *prelaunch) {
+int program_pre_launch_preparations(Launch *launch, PreLaunch *prelaunch) {
     /* Zero success, one fail. */
     convert_to_arguments(launch->args, prelaunch->argv, launch->command);
     if (handle_program_path(launch->command, prelaunch->path_to_run, launch->environment) != 0)
     {
         /* If we can't reach program then its error. */
+        error("Couldn't find progam binary on launch.\n");
         return 1;
     }
     /* Prepare redirection file. */
@@ -179,10 +179,12 @@ int progrma_pre_launch_preparations(Launch *launch, PreLaunch *prelaunch) {
     {
         /* Check file is not empty. */
         if (launch->redirection[0] == '\0') {
+            error("There has to be filename after redirection.\n");
             return 1;
         }
         /* Check that path does not contain spaces. */
         if (check_for_char(launch->redirection, ' ') != 0) {
+            error("No spaces allowed in redirection.\n");
             return 1;
         }
         /* https://stackoverflow.com/questions/8516823/redirecting-output-to-a-file-in-c */

@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <linux/limits.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <sys/types.h>

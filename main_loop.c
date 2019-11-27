@@ -36,7 +36,7 @@ void run_shell(char *batch_name)
     if (batch_name != NULL)
     {
         if ((file = fopen(batch_name, "r")) == NULL) {
-            error(ERROR_MESSAGE);
+            error("Couldn't open batch file.\n");
             exit(1);
         }
     }
@@ -51,13 +51,14 @@ void run_shell(char *batch_name)
         }
         else if (line[0] == '&') {
             /* Check for nonsense command character at the beginning. */
+            error("& character is used for parralel prosessing. Not okay alone.\n");
         }
         /* Check buildin commands. */
         else if (strncmp(line, "exit", 4) == 0)
         {
             /* Check there is no parameters for exit build in. */
             if (line[4] != '\0') {
-                error(ERROR_MESSAGE);
+                error("Exit does not take any parameters.\n");
             } else {
                 free(line);
                 break;
@@ -90,7 +91,7 @@ void run_shell(char *batch_name)
             }
             else
             {
-                error(ERROR_MESSAGE);
+                error("Couldn't find folder.\n");
             }
         } else
         {
